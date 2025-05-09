@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inventario</title>
+  <link rel="stylesheet" href="./assets/css/inventario.css" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div id="menu"></div>
+  <div class="pantalla">
+    <h1><i class="fas fa-boxes"></i> Inventario</h1>
+
+    <!-- Filtro de búsqueda -->
+    <form id="filtroForm">
+      <input type="text" id="filtroInput" placeholder="Buscar por nombre o etiqueta..." />
+      <button type="submit"><i class="fas fa-search"></i> Buscar</button>
+    </form>
+
+    <!-- Tabla generada por JS -->
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Código</th>
+          <th>Stock</th>
+          <th>Vencimiento</th>
+          <th>Etiqueta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="inventario-body"></tbody>
+    </table>
+
+    <!-- Agregar nuevo producto -->
+    <h2>Agregar nuevo producto</h2>
+    <form id="formAgregar" class="form-inline">
+      <input type="text" id="nombre" placeholder="Nombre" required />
+      <input type="text" id="codigo" placeholder="Código" required />
+      <input type="number" id="stock" placeholder="Stock" required />
+      <input type="date" id="vencimiento" placeholder="Vencimiento" />
+      <input type="text" id="etiqueta" placeholder="Etiqueta" required />
+      <button type="submit"><i class="fas fa-plus-circle"></i> Agregar</button>
+    </form>
+
+    <div class="alerta-info" id="alertaInfo"></div>
+  </div>
+  <script type="module" src="./assets/js/script.js"></script>
+</body>
+</html>

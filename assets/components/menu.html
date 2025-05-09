@@ -1,0 +1,18 @@
+<nav>
+  <a href="dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+  <a href="inventario.html" class="nav-link"><i class="fas fa-boxes"></i> Inventario</a>
+  <a href="detalle_pieza.html" class="nav-link"><i class="fas fa-info-circle"></i> Detalle</a>
+  <a href="movimientos.html" class="nav-link"><i class="fas fa-exchange-alt"></i> Movimientos</a>
+  <a href="proveedores.html" class="nav-link"><i class="fas fa-truck"></i> Proveedores</a>
+  <a href="reportes.html" class="nav-link"><i class="fas fa-chart-line"></i> Reportes</a>
+  <a href="perfil.html" class="nav-link"><i class="fas fa-user"></i> Perfil</a>
+  <a href="index.html" class="nav-link"><i class="fas fa-sign-out-alt"></i> Salir</a>
+</nav>
+<script>
+  const path = window.location.pathname.split("/").pop();
+  document.querySelectorAll(".nav-link").forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("activo");
+    }
+  });
+</script>

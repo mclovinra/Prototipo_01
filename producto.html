@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Especificaciones del Producto</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div id="menu"></div>
+  <div class="pantalla">
+    <h1><i class="fas fa-box"></i> Especificaciones del Producto</h1>
+
+    <form id="formEditar">
+      <input type="text" id="nombre" placeholder="Nombre" required disabled />
+      <input type="number" id="stock" placeholder="Stock" required disabled />
+      <input type="date" id="vencimiento" placeholder="Vencimiento" disabled />
+      <input type="text" id="etiqueta" placeholder="Etiqueta" required disabled />
+      <button type="submit" style="display:none" id="guardarBtn"><i class="fas fa-save"></i> Guardar cambios</button>
+    </form>
+
+    <button id="editarBtn"><i class="fas fa-edit"></i> Editar</button>
+    <button id="eliminarBtn" class="btn-eliminar">
+      <i class="fas fa-trash"></i> Eliminar producto
+    </button>
+
+    <div id="mensajeConfirmacion"></div>
+
+    <div style="margin-top: 20px;">
+      <button onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Volver</button>
+    </div>
+  </div>
+
+  <script src="./assets/js/producto.js"></script>
+  <script src="./assets/js/script.js"></script>
+</body>
+</html>
