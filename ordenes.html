@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Órdenes de Compra</title>
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/inventario.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div id="menu"></div>
+
+  <div class="main-content">
+
+    <h1><i class="fas fa-shopping-cart"></i> Órdenes de Compra Generadas</h1>
+
+    <div style="margin-top: 20px;">
+      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <button id="btnExportarOrdenes" class="btn-action"><i class="fas fa-file-export"></i> Exportar Órdenes a CSV</button>
+    </div>
+
+    <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código Producto</th>
+            <th>Descripción</th>
+            <th>Stock Actual</th>
+            <th>Fecha Orden</th>
+            <th>Proveedor</th>
+            <th>Correo Proveedor</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+      <tbody id="ordenesBody"></tbody>
+    </table>
+
+  </div>
+
+  <script src="./assets/js/menu.js"></script>
+  <script src="./assets/js/ordenes.js"></script>
+</body>
+</html>

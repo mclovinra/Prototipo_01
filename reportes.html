@@ -15,18 +15,28 @@
 
     <!-- Selección tipo de reporte -->
     <form id="formReporte">
-        <select id="tipoReporte" required>
-          <option value="">Selecciona tipo de reporte</option>
-          <option value="stock">Stock actual</option>
-          <option value="movimientos">Movimientos por fecha</option>
-        </select>
+      <select id="tipoReporte" required>
+        <option value="">Selecciona tipo de reporte</option>
+        <option value="stock">Stock actual</option>
+        <option value="movimientos">Movimientos por fecha</option>
+        <option value="historial">Historial de Cambios (productos)</option>
+      </select>
+      <div style="margin-top:10px;">
+        <label>Desde: <input type="date" id="fechaDesde"></label>
+        <label>Hasta: <input type="date" id="fechaHasta"></label>
+      </div>
 
-        <div style="margin-top:10px;">
-          <label>Desde: <input type="date" id="fechaDesde"></label>
-          <label>Hasta: <input type="date" id="fechaHasta"></label>
-        </div>      
+      <!-- Nuevo filtro para historial -->
+      <div style="margin-top:10px;">
+        <label>Filtrar por atributo (solo historial):</label>
+        <input type="text" id="filtroAtributo" placeholder="Ej: stock, descripcion">
+      </div>
 
       <button type="submit"><i class="fas fa-file-alt"></i> Generar Reporte</button>
+      <!-- Botón volver -->
+      <div style="margin-top: 20px;">
+        <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
+      </div>
     </form>
 
     <!-- Contenedor de resultados -->
@@ -41,10 +51,6 @@
       <button id="btnExportarReporte" class="btn-action"><i class="fas fa-file-export"></i> Exportar a CSV</button>
     </div>
 
-    <!-- Botón volver -->
-    <div style="margin-top: 20px;">
-      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
-    </div>
   </div>
 
   <script src="./assets/js/menu.js"></script>

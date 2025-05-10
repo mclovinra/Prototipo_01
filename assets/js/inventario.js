@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         descripcion: "Rodamiento industrial",
         numeroSerie: "SN123456",
         lote: "L001",
-        fechaVencimiento: "2024-07-15",
+        fechaVencimiento: "15-07-2026",
         ubicacion: "Almacén A1",
         stock: 4,
         categoria: "Mecánica",
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         descripcion: "Lubricante sintético",
         numeroSerie: "SN654321",
         lote: "L002",
-        fechaVencimiento: "2024-05-25",
+        fechaVencimiento: "2026-05-25",
         ubicacion: "Almacén B2",
         stock: 12,
         categoria: "Lubricantes",
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         descripcion: "Filtro de aire pesado",
         numeroSerie: "SN987654",
         lote: "L003",
-        fechaVencimiento: "2024-06-10",
+        fechaVencimiento: "2026-06-10",
         ubicacion: "Almacén C3",
         stock: 2,
         categoria: "Filtros",
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       descripcion: document.getElementById("descripcion").value,
       numeroSerie: document.getElementById("numeroSerie").value,
       lote: document.getElementById("lote").value,
-      fechaVencimiento: document.getElementById("fechaVencimiento").value,
+      fechaVencimiento: document.getElementById("fechaVencimiento").value || "---",
       ubicacion: document.getElementById("ubicacion").value,
       stock: parseInt(document.getElementById("stock").value),
       categoria: document.getElementById("categoria").value,
@@ -73,6 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btnQuitarFiltroInventario").addEventListener("click", () => {
     document.getElementById("filtroInventario").value = "";
+    if (document.getElementById("filtroEstado")) {
+      document.getElementById("filtroEstado").value = "";
+    }
     renderTabla();
   });
 });
@@ -81,11 +84,22 @@ function renderTabla(filtro = "") {
   const productos = JSON.parse(localStorage.getItem("productos")) || [];
   const body = document.getElementById("inventarioBody");
   const alertas = document.getElementById("alertas");
+  const estado = document.getElementById("filtroEstado") ? document.getElementById("filtroEstado").value : "";
+
   body.innerHTML = "";
   alertas.innerHTML = "";
 
   productos.forEach(prod => {
-    // ✅ Búsqueda dentro de cualquier campo
+    const hoy = new Date();
+    const fechaVenc = new Date(prod.fechaVencimiento);
+    const diasRestantes = Math.floor((fechaVenc - hoy) / (1000 * 60 * 60 * 24));
+
+    // ✅ Nuevo filtro por estado
+    if (estado === "vencidos" && !(fechaVenc < hoy && !isNaN(fechaVenc.getTime()))) return;
+    if (estado === "porvencer" && !(diasRestantes >= 0 && diasRestantes <= 15)) return;
+    if (estado === "stockbajo" && !(prod.stock < 5)) return;
+
+    // ✅ Búsqueda general en cualquier campo
     if (filtro) {
       const valores = Object.values(prod).map(v => String(v).toLowerCase());
       if (!valores.some(val => val.includes(filtro.toLowerCase()))) return;
@@ -93,12 +107,16 @@ function renderTabla(filtro = "") {
 
     const row = document.createElement("tr");
 
-    const hoy = new Date();
-    const fechaVenc = new Date(prod.fechaVencimiento);
-    const diasRestantes = Math.floor((fechaVenc - hoy) / (1000 * 60 * 60 * 24));
-
     if (prod.stock < 5) row.classList.add("alerta-stock");
-    if (!isNaN(diasRestantes) && diasRestantes >= 0 && diasRestantes <= 30) row.classList.add("alerta-vencimiento");
+
+    if (!isNaN(fechaVenc.getTime())) {
+      if (diasRestantes < 0) {
+        row.style.backgroundColor = "#ffcccc";
+        row.style.color = "#a00";
+      } else if (diasRestantes >= 0 && diasRestantes <= 15) {
+        row.classList.add("alerta-vencimiento");
+      }
+    }
 
     row.innerHTML = `
       <td>${prod.codigo}</td>
@@ -115,7 +133,7 @@ function renderTabla(filtro = "") {
     body.appendChild(row);
   });
 
-  // Mostrar alertas generales
+  // Alertas generales (opcional)
   const alertasStock = productos.filter(p => p.stock < 5).length;
   const alertasVenc = productos.filter(p => {
     const venc = new Date(p.fechaVencimiento);

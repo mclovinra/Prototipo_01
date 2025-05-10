@@ -14,52 +14,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (tipo === "stock") {
       const productos = JSON.parse(localStorage.getItem("productos")) || [];
-      head.innerHTML = `
-        <tr>
-          <th>Código</th>
-          <th>Descripción</th>
-          <th>Stock</th>
-        </tr>`;
+      head.innerHTML = `<tr><th>Código</th><th>Descripción</th><th>Stock</th></tr>`;
       productos.forEach(p => {
         const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${p.codigo}</td>
-          <td>${p.descripcion}</td>
-          <td>${p.stock}</td>`;
+        row.innerHTML = `<td>${p.codigo}</td><td>${p.descripcion}</td><td>${p.stock}</td>`;
         body.appendChild(row);
         datosReporte.push({ Codigo: p.codigo, Descripcion: p.descripcion, Stock: p.stock });
       });
 
     } else if (tipo === "movimientos") {
-        const desde = document.getElementById("fechaDesde").value;
-        const hasta = document.getElementById("fechaHasta").value;        
-        const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-        head.innerHTML = `
-          <tr>
-            <th>Fecha</th>
-            <th>Código Producto</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-          </tr>`;
-        movimientos.forEach(m => {
-          const fechaMovimiento = new Date(m.fecha.split(",")[0]); // solo toma la fecha (día/mes/año)
+      const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+      const desde = document.getElementById("fechaDesde").value;
+      const hasta = document.getElementById("fechaHasta").value;
+
+      head.innerHTML = `<tr><th>Fecha</th><th>Código Producto</th><th>Tipo</th><th>Cantidad</th></tr>`;
+      movimientos.forEach(m => {
+        const fechaMovimiento = new Date(m.fecha.split(",")[0]);
+        let incluir = true;
+        if (desde) incluir = incluir && (fechaMovimiento >= new Date(desde));
+        if (hasta) incluir = incluir && (fechaMovimiento <= new Date(hasta));
+        if (!incluir) return;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${m.fecha}</td><td>${m.codigoProducto}</td><td>${m.tipo}</td><td>${m.cantidad}</td>`;
+        body.appendChild(row);
+        datosReporte.push({ Fecha: m.fecha, Codigo: m.codigoProducto, Tipo: m.tipo, Cantidad: m.cantidad });
+      });
+
+    } else if (tipo === "historial") {
+      const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
+      const filtroAtributo = document.getElementById("filtroAtributo").value.trim().toLowerCase();
         
-          let incluir = true;
-          if (desde) incluir = incluir && (fechaMovimiento >= new Date(desde));
-          if (hasta) incluir = incluir && (fechaMovimiento <= new Date(hasta));
+      head.innerHTML = `<tr><th>Código Producto</th><th>Fecha</th><th>Detalle Cambios</th></tr>`;
         
-          if (!incluir) return;
+      Object.keys(historial).forEach(codigo => {
+        historial[codigo].forEach(entry => {
+          const anterior = entry.anterior || {};
+          const cambios = entry.cambios;
+          let detalleCambios = "";
         
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${m.fecha}</td>
-            <td>${m.codigoProducto}</td>
-            <td>${m.tipo}</td>
-            <td>${m.cantidad}</td>`;
-          body.appendChild(row);
-          datosReporte.push({ Fecha: m.fecha, Codigo: m.codigoProducto, Tipo: m.tipo, Cantidad: m.cantidad });
+          Object.keys(cambios).forEach(attr => {
+            if (filtroAtributo && !attr.toLowerCase().includes(filtroAtributo)) return;
+          
+            const valorAnterior = (anterior[attr] !== undefined) ? anterior[attr] : "(sin dato)";
+            const valorNuevo = cambios[attr];
+            if (valorAnterior !== valorNuevo) {
+              detalleCambios += `${attr}: Antes "${valorAnterior}" → Cambio "${valorNuevo}" | `;
+            }
+          });
+        
+          if (detalleCambios) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${codigo}</td><td>${entry.fecha}</td><td>${detalleCambios}</td>`;
+            body.appendChild(row);
+            datosReporte.push({ Codigo: codigo, Fecha: entry.fecha, Cambios: detalleCambios });
+          }
         });
+      });
     }
+
   });
 
   document.getElementById("btnExportarReporte").addEventListener("click", () => {

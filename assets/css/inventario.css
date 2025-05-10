@@ -103,3 +103,8 @@ textarea {
 .btn-warning:hover {
   background-color: #e67e22;
 }
+
+.alerta-vencimiento {
+  background-color: #fff3cd;
+  color: #856404;
+}

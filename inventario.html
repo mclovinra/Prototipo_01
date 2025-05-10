@@ -19,6 +19,15 @@
     <!-- Filtro de búsqueda -->
     <form id="formFiltroInventario" style="margin-bottom: 10px;">
       <input type="text" id="filtroInventario" placeholder="Buscar en cualquier campo">
+      
+      <!-- Nuevo filtro adicional -->
+      <select id="filtroEstado">
+        <option value="">-- Filtrar por estado --</option>
+        <option value="vencidos">Productos Vencidos</option>
+        <option value="porvencer">Productos por Vencer (≤15 días)</option>
+        <option value="stockbajo">Stock Bajo (&lt;5)</option>
+      </select>
+    
       <button type="submit"><i class="fas fa-filter"></i> Filtrar</button>
       <button type="button" id="btnQuitarFiltroInventario" class="btn-action btn-warning"><i class="fas fa-times"></i> Quitar Filtro</button>
     </form>
@@ -49,7 +58,7 @@
       <input type="text" id="descripcion" placeholder="Descripción" required>
       <input type="text" id="numeroSerie" placeholder="Número de serie" required>
       <input type="text" id="lote" placeholder="Lote" required>
-      <input type="date" id="fechaVencimiento" required>
+      <input type="date" id="fechaVencimiento" placeholder="Fecha de Vencimiento (opcional)">
       <input type="text" id="ubicacion" placeholder="Ubicación" required>
       <input type="number" id="stock" placeholder="Stock actual" required>
       <input type="text" id="categoria" placeholder="Categoría" required>

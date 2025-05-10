@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
       producto.stock += cantidad;
     } else if (tipo === "Salida") {
       producto.stock -= cantidad;
+      // ✅ Generar orden automática si stock < 5
+      if (producto.stock < 5) {
+        generarOrdenCompra(producto);
+      }
     }
 
     const nuevosProductos = productos.map(p => p.codigo === codigo ? producto : p);
@@ -102,4 +106,28 @@ function renderMovimientos(filtro = "") {
     `;
     body.appendChild(row);
   });
+}
+
+function generarOrdenCompra(producto) {
+  const ordenes = JSON.parse(localStorage.getItem("ordenes")) || [];
+  const proveedores = JSON.parse(localStorage.getItem("proveedores")) || [];
+
+  let proveedorSeleccionado = { nombre: "Proveedor Genérico", correo: "sinregistro@proveedor.com" };
+  if (proveedores.length > 0) {
+    const random = Math.floor(Math.random() * proveedores.length);
+    proveedorSeleccionado = proveedores[random];
+  }
+
+  const nuevaOrden = {
+    id: ordenes.length + 1,
+    codigo: producto.codigo,
+    descripcion: producto.descripcion,
+    stock: producto.stock,
+    fecha: new Date().toLocaleString(),
+    proveedor: proveedorSeleccionado.nombre,
+    correoProveedor: proveedorSeleccionado.correo
+  };
+
+  ordenes.push(nuevaOrden);
+  localStorage.setItem("ordenes", JSON.stringify(ordenes));
 }
