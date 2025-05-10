@@ -2,36 +2,44 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Especificaciones del Producto</title>
-  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <title>Detalle del Producto</title>
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/inventario.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
   <div id="menu"></div>
-  <div class="pantalla">
-    <h1><i class="fas fa-box"></i> Especificaciones del Producto</h1>
+
+  <div class="main-content">
+    <h1><i class="fas fa-box"></i> Detalle del Producto</h1>
 
     <form id="formEditar">
-      <input type="text" id="nombre" placeholder="Nombre" required disabled />
-      <input type="number" id="stock" placeholder="Stock" required disabled />
-      <input type="date" id="vencimiento" placeholder="Vencimiento" disabled />
-      <input type="text" id="etiqueta" placeholder="Etiqueta" required disabled />
-      <button type="submit" style="display:none" id="guardarBtn"><i class="fas fa-save"></i> Guardar cambios</button>
+      <input type="text" id="codigo" placeholder="Código" required disabled />
+      <input type="text" id="descripcion" placeholder="Descripción" required disabled />
+      <input type="text" id="numeroSerie" placeholder="Número de serie" required disabled />
+      <input type="text" id="lote" placeholder="Lote" required disabled />
+      <input type="date" id="fechaVencimiento" required disabled />
+      <input type="text" id="ubicacion" placeholder="Ubicación" required disabled />
+      <input type="number" id="stock" placeholder="Stock actual" required disabled />
+      <input type="text" id="categoria" placeholder="Categoría" required disabled />
+      <input type="number" step="0.01" id="precioCompra" placeholder="Precio de compra" required disabled />
+      <button type="submit" id="guardarBtn" style="display:none"><i class="fas fa-save"></i> Guardar cambios</button>
+      <button type="button" id="cancelarBtn" style="display:none" class="btn-action btn-warning"><i class="fas fa-times"></i> Cancelar</button>
     </form>
 
-    <button id="editarBtn"><i class="fas fa-edit"></i> Editar</button>
-    <button id="eliminarBtn" class="btn-eliminar">
-      <i class="fas fa-trash"></i> Eliminar producto
-    </button>
+    <button id="editarBtn" class="btn-action"><i class="fas fa-edit"></i> Editar</button>
+    <button id="eliminarBtn" class="btn-action btn-danger"><i class="fas fa-trash"></i> Eliminar producto</button>
 
-    <div id="mensajeConfirmacion"></div>
+    <hr>
+    <h3>Historial de Cambios</h3>
+    <div id="historial"></div>
 
     <div style="margin-top: 20px;">
-      <button onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Volver</button>
+      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
     </div>
   </div>
 
+  <script src="./assets/js/menu.js"></script>
   <script src="./assets/js/producto.js"></script>
-  <script src="./assets/js/script.js"></script>
 </body>
 </html>

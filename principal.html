@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Página Principal</title>
+  <link rel="stylesheet" href="./assets/css/menu.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div id="menu"></div>
+
+  <div class="main-content">
+    <h1 id="welcome"></h1>
+    <p id="motivational">🌟 ¡Hoy es un gran día para lograr tus objetivos! 🌟</p>
+  </div>
+
+  <script src="./assets/js/menu.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (user) {
+        document.getElementById("welcome").textContent = `Bienvenido, ${user.nombre} ${user.apellidoP} ${user.apellidoM}!`;
+      } else {
+        document.getElementById("welcome").textContent = "Bienvenido!";
+      }
+    });
+  </script>
+</body>
+</html>

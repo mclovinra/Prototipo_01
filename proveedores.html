@@ -2,24 +2,58 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Proveedores</title>
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  <title>Gestión de Proveedores</title>
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/inventario.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div id="menu"></div>
-  <div class="pantalla">
+
+  <div class="main-content">
     <h1><i class="fas fa-truck"></i> Gestión de Proveedores</h1>
-    <form>
-      <input type="text" placeholder="Nombre del proveedor" />
-      <input type="email" placeholder="Correo de contacto" />
-      <button type="submit"><i class="fas fa-plus-circle"></i> Agregar</button>
+
+    <!-- Formulario para agregar proveedor -->
+    <h2>Registrar Proveedor</h2>
+    <form id="formProveedor">
+      <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
+      <input type="email" id="correoProveedor" placeholder="Correo electrónico" required>
+      <input type="text" id="telefonoProveedor" placeholder="Teléfono" required>
+      <textarea id="detallesProveedor" placeholder="Detalles o comentarios (opcional)"></textarea>
+      <button type="submit"><i class="fas fa-plus-circle"></i> Agregar Proveedor</button>
     </form>
+
+    <!-- Tabla de proveedores -->
+    <h2>Listado de Proveedores</h2>
+
+    <form id="formFiltroProveedor" style="margin-bottom: 10px;">
+        <input type="text" id="filtroProveedor" placeholder="Filtrar por nombre de proveedor">
+        <button type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+        <button type="button" id="btnQuitarFiltroProveedor" class="btn-action btn-warning"><i class="fas fa-times"></i> Quitar Filtro</button>
+    </form>
+
+    <button id="btnExportarProveedores" class="btn-action" style="margin-bottom: 10px;"><i class="fas fa-file-export"></i> Exportar a CSV</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Detalles</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="proveedoresBody"></tbody>
+    </table>
+
+    <!-- Botón volver -->
+    <div style="margin-top: 20px;">
+      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
+    </div>
   </div>
-  <script>
-    fetch("./assets/components/menu.html")
-      .then(res => res.text())
-      .then(html => document.getElementById("menu").innerHTML = html);
-  </script>
+
+  <script src="./assets/js/menu.js"></script>
+  <script src="./assets/js/proveedores.js"></script>
 </body>
 </html>

@@ -3,26 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <title>Reportes</title>
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/inventario.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div id="menu"></div>
-  <div class="pantalla">
+
+  <div class="main-content">
     <h1><i class="fas fa-chart-line"></i> Reportes</h1>
-    <form>
-      <select>
-        <option>Selecciona tipo de reporte</option>
-        <option>Stock actual</option>
-        <option>Movimientos por fecha</option>
-      </select>
-      <button type="submit"><i class="fas fa-file-alt"></i> Generar</button>
+
+    <!-- Selección tipo de reporte -->
+    <form id="formReporte">
+        <select id="tipoReporte" required>
+          <option value="">Selecciona tipo de reporte</option>
+          <option value="stock">Stock actual</option>
+          <option value="movimientos">Movimientos por fecha</option>
+        </select>
+
+        <div style="margin-top:10px;">
+          <label>Desde: <input type="date" id="fechaDesde"></label>
+          <label>Hasta: <input type="date" id="fechaHasta"></label>
+        </div>      
+
+      <button type="submit"><i class="fas fa-file-alt"></i> Generar Reporte</button>
     </form>
+
+    <!-- Contenedor de resultados -->
+    <h2>Resultados</h2>
+    <table>
+      <thead id="reporteHead"></thead>
+      <tbody id="reporteBody"></tbody>
+    </table>
+
+    <!-- Exportar -->
+    <div style="margin-top: 10px;">
+      <button id="btnExportarReporte" class="btn-action"><i class="fas fa-file-export"></i> Exportar a CSV</button>
+    </div>
+
+    <!-- Botón volver -->
+    <div style="margin-top: 20px;">
+      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
+    </div>
   </div>
-  <script>
-    fetch("./assets/components/menu.html")
-      .then(res => res.text())
-      .then(html => document.getElementById("menu").innerHTML = html);
-  </script>
+
+  <script src="./assets/js/menu.js"></script>
+  <script src="./assets/js/reportes.js"></script>
 </body>
 </html>

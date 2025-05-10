@@ -2,23 +2,58 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Movimientos</title>
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  <title>Movimientos de Inventario</title>
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/inventario.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div id="menu"></div>
-  <div class="pantalla">
+
+  <div class="main-content">
     <h1><i class="fas fa-exchange-alt"></i> Movimientos de Inventario</h1>
-    <ul>
-      <li>Entrada: Lubricante (10 uds) - 01/05/2025</li>
-      <li>Salida: Motor hidráulico (1 ud) - 02/05/2025</li>
-    </ul>
+
+    <!-- Formulario para agregar movimiento -->
+    <h2>Registrar Movimiento</h2>
+    <form id="formMovimiento">
+      <input type="text" id="codigoProducto" placeholder="Código del Producto" required>
+      <select id="tipoMovimiento" required>
+        <option value="">Selecciona tipo</option>
+        <option value="Entrada">Entrada</option>
+        <option value="Salida">Salida</option>
+      </select>
+      <input type="number" id="cantidad" placeholder="Cantidad" required>
+      <button type="submit"><i class="fas fa-plus-circle"></i> Registrar</button>
+    </form>
+
+    <!-- Tabla de movimientos -->
+    <h2>Historial de Movimientos</h2>
+
+    <form id="formFiltro" style="margin-bottom: 10px;">
+      <input type="text" id="filtroCodigo" placeholder="Filtrar por código de producto">
+      <button type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+      <button type="button" id="btnQuitarFiltro" class="btn-action btn-warning"><i class="fas fa-times"></i> Quitar Filtro</button>
+    </form>
+
+    <button id="btnExportar" class="btn-action" style="margin-bottom: 10px;"><i class="fas fa-file-export"></i> Exportar a CSV</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Código Producto</th>
+          <th>Tipo</th>
+          <th>Cantidad</th>
+        </tr>
+      </thead>
+      <tbody id="movimientosBody"></tbody>
+    </table>
+    <div style="margin-top: 20px;">
+      <button onclick="window.location.href='inventario.html'" class="btn-action"><i class="fas fa-arrow-left"></i> Volver a inventario</button>
+    </div>
   </div>
-  <script>
-    fetch("./assets/components/menu.html")
-      .then(res => res.text())
-      .then(html => document.getElementById("menu").innerHTML = html);
-  </script>
+
+  <script src="./assets/js/menu.js"></script>
+  <script src="./assets/js/movimientos.js"></script>
 </body>
 </html>

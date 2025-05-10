@@ -1,71 +1,151 @@
-// Cargar menú
-fetch("/assets/components/menu.html")
-  .then(res => res.text())
-  .then(html => document.getElementById("menu").innerHTML = html);
+document.addEventListener("DOMContentLoaded", () => {
+  const producto = JSON.parse(localStorage.getItem("productoSeleccionado"));
+  const cancelarBtn = document.getElementById("cancelarBtn");
 
-// Obtener parámetros de la URL
-const params = new URLSearchParams(window.location.search);
-const codigo = params.get("codigo");
-const modo = params.get("modo"); // puede ser 'ver' o 'editar'
+  if (!producto) {
+    alert("No se encontró un producto seleccionado.");
+    window.location.href = "inventario.html";
+    return;
+  }
 
-let productos = JSON.parse(localStorage.getItem("productos")) || [];
-let producto = productos.find(p => p.codigo === codigo);
+  const productos = JSON.parse(localStorage.getItem("productos")) || [];
+  const codigo = producto.codigo;
 
-if (!producto) {
-  producto = {
-    nombre: params.get("nombre"),
-    codigo: codigo,
-    stock: params.get("stock"),
-    vencimiento: params.get("vencimiento"),
-    etiqueta: params.get("etiqueta")
-  };
-}
+  // Rellenar campos
+  document.getElementById("codigo").value = producto.codigo;
+  document.getElementById("descripcion").value = producto.descripcion;
+  document.getElementById("numeroSerie").value = producto.numeroSerie;
+  document.getElementById("lote").value = producto.lote;
+  document.getElementById("fechaVencimiento").value = producto.fechaVencimiento;
+  document.getElementById("ubicacion").value = producto.ubicacion;
+  document.getElementById("stock").value = producto.stock;
+  document.getElementById("categoria").value = producto.categoria;
+  document.getElementById("precioCompra").value = producto.precioCompra;
 
-// Rellenar campos
-document.getElementById("nombre").value = producto.nombre;
-document.getElementById("stock").value = producto.stock;
-document.getElementById("vencimiento").value = producto.vencimiento !== "---" ? producto.vencimiento : "";
-document.getElementById("etiqueta").value = producto.etiqueta;
+  const inputs = document.querySelectorAll("#formEditar input");
+  const guardarBtn = document.getElementById("guardarBtn");
 
-// Deshabilitar campos por defecto (modo lectura)
-const inputs = document.querySelectorAll("#formEditar input");
-const guardarBtn = document.getElementById("guardarBtn");
+  // Botón editar
+  document.getElementById("editarBtn").addEventListener("click", () => {
+    inputs.forEach(i => i.disabled = false);
+    guardarBtn.style.display = "inline-block";
+    cancelarBtn.style.display = "inline-block";
+    document.getElementById("editarBtn").style.display = "none";
 
-if (modo === "editar") {
-  inputs.forEach(i => i.disabled = false);
-  guardarBtn.style.display = "inline-block";
-} else {
-  inputs.forEach(i => i.disabled = true);
-  guardarBtn.style.display = "none";
-}
+    // Guarda valores originales por si cancela
+    inputs.forEach(input => input.setAttribute("data-original", input.value));
+  });
 
-// Botón EDITAR habilita campos
-document.getElementById("editarBtn").addEventListener("click", () => {
-  inputs.forEach(i => i.disabled = false);
-  guardarBtn.style.display = "inline-block";
-});
+  // Botón cancelar
+  cancelarBtn.addEventListener("click", () => {
+    inputs.forEach(input => {
+      input.value = input.getAttribute("data-original");
+      input.disabled = true;
+    });
+    guardarBtn.style.display = "none";
+    cancelarBtn.style.display = "none";
+    document.getElementById("editarBtn").style.display = "inline-block";
+  });
 
-// GUARDAR cambios
-document.getElementById("formEditar").addEventListener("submit", function (e) {
-  e.preventDefault();
+  // Botón guardar cambios
+  document.getElementById("formEditar").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-  producto.nombre = document.getElementById("nombre").value;
-  producto.stock = parseInt(document.getElementById("stock").value);
-  producto.vencimiento = document.getElementById("vencimiento").value || "---";
-  producto.etiqueta = document.getElementById("etiqueta").value;
+    const cambios = {
+      descripcion: document.getElementById("descripcion").value,
+      numeroSerie: document.getElementById("numeroSerie").value,
+      lote: document.getElementById("lote").value,
+      fechaVencimiento: document.getElementById("fechaVencimiento").value,
+      ubicacion: document.getElementById("ubicacion").value,
+      stock: parseInt(document.getElementById("stock").value),
+      categoria: document.getElementById("categoria").value,
+      precioCompra: parseFloat(document.getElementById("precioCompra").value)
+    };
 
-  productos = productos.map(p => p.codigo === codigo ? producto : p);
-  localStorage.setItem("productos", JSON.stringify(productos));
+    guardarHistorial(codigo, cambios);
 
-  document.getElementById("mensajeConfirmacion").textContent = "✔ Cambios guardados correctamente.";
-});
+    producto.descripcion = cambios.descripcion;
+    producto.numeroSerie = cambios.numeroSerie;
+    producto.lote = cambios.lote;
+    producto.fechaVencimiento = cambios.fechaVencimiento;
+    producto.ubicacion = cambios.ubicacion;
+    producto.stock = cambios.stock;
+    producto.categoria = cambios.categoria;
+    producto.precioCompra = cambios.precioCompra;
 
-// ELIMINAR producto
-document.getElementById("eliminarBtn").addEventListener("click", () => {
-  if (confirm("¿Eliminar este producto?")) {
-    productos = productos.filter(p => p.codigo !== codigo);
-    localStorage.setItem("productos", JSON.stringify(productos));
-    alert("Producto eliminado.");
-    window.location.href = "detalle.html";
+    mostrarHistorial(codigo);
+
+    const nuevosProductos = productos.map(p => p.codigo === codigo ? producto : p);
+    localStorage.setItem("productos", JSON.stringify(nuevosProductos));
+    localStorage.setItem("productoSeleccionado", JSON.stringify(producto));
+
+    alert("Producto actualizado.");
+    inputs.forEach(i => i.disabled = true);
+    guardarBtn.style.display = "none";
+    document.getElementById("editarBtn").style.display = "inline-block";
+    cancelarBtn.style.display = "none";
+  });
+
+  // Botón eliminar
+  document.getElementById("eliminarBtn").addEventListener("click", () => {
+    if (confirm("¿Seguro que quieres eliminar este producto?")) {
+      const nuevosProductos = productos.filter(p => p.codigo !== codigo);
+      localStorage.setItem("productos", JSON.stringify(nuevosProductos));
+      localStorage.removeItem("productoSeleccionado");
+      alert("Producto eliminado.");
+      window.location.href = "inventario.html";
+    }
+  });
+
+  mostrarHistorial(codigo);
+
+  // ====== HISTORIAL ======
+  function guardarHistorial(codigo, cambios) {
+    const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
+    const productos = JSON.parse(localStorage.getItem("productos")) || [];
+    const anterior = productos.find(p => p.codigo === codigo) || {};
+
+    if (!historial[codigo]) historial[codigo] = [];
+
+    historial[codigo].push({
+      fecha: new Date().toLocaleString(),
+      cambios,
+      anterior
+    });
+
+    localStorage.setItem("historialCambios", JSON.stringify(historial));
+  }
+
+  function mostrarHistorial(codigo) {
+    const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}")[codigo] || [];
+    const contenedor = document.getElementById("historial");
+    if (!contenedor) return;
+
+    if (historial.length === 0) {
+      contenedor.innerHTML = "<p>Sin cambios registrados.</p>";
+      return;
+    }
+
+    contenedor.innerHTML = "";
+    historial.slice().reverse().forEach(entry => {
+      const anterior = entry.anterior || {};
+      const cambios = entry.cambios;
+      const div = document.createElement("div");
+      div.style.border = "1px solid #ddd";
+      div.style.padding = "10px";
+      div.style.marginBottom = "8px";
+      div.style.background = "#fafafa";
+
+      div.innerHTML = `<strong>${entry.fecha}</strong><br>
+        Descripción: <span style="color:${anterior.descripcion !== cambios.descripcion ? 'red' : 'black'}">${cambios.descripcion}</span><br>
+        Número Serie: <span style="color:${anterior.numeroSerie !== cambios.numeroSerie ? 'red' : 'black'}">${cambios.numeroSerie}</span><br>
+        Lote: <span style="color:${anterior.lote !== cambios.lote ? 'red' : 'black'}">${cambios.lote}</span><br>
+        Vencimiento: <span style="color:${anterior.fechaVencimiento !== cambios.fechaVencimiento ? 'red' : 'black'}">${cambios.fechaVencimiento}</span><br>
+        Ubicación: <span style="color:${anterior.ubicacion !== cambios.ubicacion ? 'red' : 'black'}">${cambios.ubicacion}</span><br>
+        Stock: <span style="color:${anterior.stock !== cambios.stock ? 'red' : 'black'}">${cambios.stock}</span><br>
+        Categoría: <span style="color:${anterior.categoria !== cambios.categoria ? 'red' : 'black'}">${cambios.categoria}</span><br>
+        Precio: <span style="color:${anterior.precioCompra !== cambios.precioCompra ? 'red' : 'black'}">${cambios.precioCompra}</span>`;
+      contenedor.appendChild(div);
+    });
   }
 });

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Prototipo</title>
+  <link rel="stylesheet" href="./assets/css/login.css" />
+</head>
+<body>
+  <div class="login-container">
+    <h1>Maestranzas Unidos S.A.</h1>
+
+    <!-- Login -->
+    <form id="loginForm">
+      <input type="text" id="loginUser" placeholder="Nombre de usuario" required />
+      <div class="password-wrapper">
+        <input type="password" id="loginPassword" placeholder="Contraseña" required />
+        <span id="toggleLoginPassword" class="toggle-password">👁️</span>
+      </div>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <!-- Botones adicionales -->
+    <button id="showRegister">Registrarse</button>
+    <button id="showRecover">Recuperar contraseña</button>
+
+    <!-- Registro -->
+    <div id="registerSection" class="hidden">
+      <h2>Registro</h2>
+      <form id="registerForm">
+        <input type="text" id="regUsername" placeholder="Nombre de usuario" required />
+        <input type="text" id="regNombre" placeholder="Nombre" required />
+        <input type="text" id="regApellidoP" placeholder="Apellido Paterno" required />
+        <input type="text" id="regApellidoM" placeholder="Apellido Materno" required />
+        <input type="date" id="regFechaNac" required />
+        <input type="email" id="regCorreo" placeholder="Correo electrónico" required />
+        <div class="password-wrapper">
+          <input type="password" id="regPassword" placeholder="Contraseña" required />
+          <span id="toggleRegPassword" class="toggle-password">👁️</span>
+        </div>
+        <button type="submit">Registrarse</button>
+      </form>
+    </div>
+
+    <!-- Recuperar contraseña -->
+    <div id="recoverSection" class="hidden">
+      <h2>Recuperar contraseña</h2>
+      <form id="recoverForm">
+        <input type="text" id="recoverUser" placeholder="Nombre de usuario" required />
+        <button type="submit">Recuperar</button>
+      </form>
+      <p id="recoveredPassword"></p>
+    </div>
+  </div>
+
+  <script src="./assets/js/login.js"></script>
+</body>
+</html>
