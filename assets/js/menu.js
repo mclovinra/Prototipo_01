@@ -16,3 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 });
+
+function cerrarSesion() {
+  if (confirm("¿Estás seguro que deseas cerrar sesión?")) {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  }
+}
