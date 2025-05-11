@@ -55,7 +55,7 @@ button:hover {
 }
 
 body.login-bg {
-  background-image: url('../img/logo_maestranzas.png'); /* Ruta ajustada */
+  background-color: #6e6a6a;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

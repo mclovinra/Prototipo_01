@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("formAgregar").addEventListener("submit", function(e) {
     e.preventDefault();
     const productos = JSON.parse(localStorage.getItem("productos")) || [];
-
+  
     const nuevo = {
       codigo: document.getElementById("codigo").value,
       descripcion: document.getElementById("descripcion").value,
@@ -58,7 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
       categoria: document.getElementById("categoria").value,
       precioCompra: parseFloat(document.getElementById("precioCompra").value)
     };
-
+  
+    // ✅ Nueva validación para código único
+    const existe = productos.some(p => p.codigo === nuevo.codigo);
+    if (existe) {
+      alert("Ya existe un producto con este código.");
+      return;
+    }
+  
     productos.push(nuevo);
     localStorage.setItem("productos", JSON.stringify(productos));
     this.reset();
