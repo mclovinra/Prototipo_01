@@ -15,11 +15,46 @@
       <input type="text" id="codigo" placeholder="Código" required disabled />
       <input type="text" id="descripcion" placeholder="Descripción" required disabled />
       <input type="text" id="numeroSerie" placeholder="Número de serie" required disabled />
-      <input type="text" id="lote" placeholder="Lote" required disabled />
-      <input type="date" id="fechaVencimiento" required disabled />
-      <input type="text" id="ubicacion" placeholder="Ubicación" required disabled />
+      <select id="lote" required>
+        <option value="">Selecciona lote</option>
+        <option value="L001">L001</option>
+        <option value="L002">L002</option>
+        <option value="L003">L003</option>
+        <option value="L004">L004</option>
+        <option value="L005">L005</option>
+        <option value="L006">L006</option>
+      </select>
+      <input type="date" id="fechaVencimiento"/>
+      <select id="ubicacion" required>
+        <option value="">Selecciona ubicación</option>
+        <option value="Almacén A1">Almacén A1</option>
+        <option value="Almacén A2">Almacén A2</option>
+        <option value="Almacén A3">Almacén A3</option>
+        <option value="Almacén A4">Almacén A4</option>
+        <option value="Almacén B1">Almacén B1</option>
+        <option value="Almacén B2">Almacén B2</option>
+        <option value="Almacén B3">Almacén B3</option>
+        <option value="Almacén B4">Almacén B4</option>
+        <option value="Almacén C1">Almacén C1</option>
+        <option value="Almacén C2">Almacén C2</option>
+        <option value="Almacén C3">Almacén C3</option>
+        <option value="Almacén C4">Almacén C4</option>
+      </select>
       <input type="number" id="stock" placeholder="Stock actual" required disabled />
-      <input type="text" id="categoria" placeholder="Categoría" required disabled />
+      <select id="categoria" required>
+        <option value="">Selecciona categoría</option>
+        <option value="Aceros y Metales">Aceros y Metales</option>
+        <option value="Aceros de Perforación Minas">Aceros de Perforación Minas</option>
+        <option value="Aceros para Molienda">Aceros para Molienda</option>
+        <option value="Bombas">Bombas</option>
+        <option value="Cañerías, Tubos y Fitting Metálicos">Cañerías, Tubos y Fitting Metálicos</option>
+        <option value="Chancadores">Chancadores</option>
+        <option value="Compresores y Sopladores">Compresores y Sopladores</option>
+        <option value="Elementos de Transmisión de Potencia">Elementos de Transmisión de Potencia</option>
+        <option value="Ferretería">Ferretería</option>
+        <option value="Filtros y Elementos Filtrantes">Filtros y Elementos Filtrantes</option>
+        <option value="Neumáticos">Neumáticos</option>
+      </select>
       <input type="number" step="0.01" id="precioCompra" placeholder="Precio de compra" required disabled />
       <button type="submit" id="guardarBtn" style="display:none"><i class="fas fa-save"></i> Guardar cambios</button>
       <button type="button" id="cancelarBtn" style="display:none" class="btn-action btn-warning"><i class="fas fa-times"></i> Cancelar</button>

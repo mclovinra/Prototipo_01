@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         descripcion: "Rodamiento industrial",
         numeroSerie: "SN123456",
         lote: "L001",
-        fechaVencimiento: "15-07-2026",
+        fechaVencimiento: "2026-07-15", // ✅ corregido
         ubicacion: "Almacén A1",
         stock: 4,
         categoria: "Mecánica",
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("formAgregar").addEventListener("submit", function(e) {
     e.preventDefault();
     const productos = JSON.parse(localStorage.getItem("productos")) || [];
-  
+
     const nuevo = {
       codigo: document.getElementById("codigo").value,
       descripcion: document.getElementById("descripcion").value,
@@ -58,16 +58,20 @@ document.addEventListener("DOMContentLoaded", () => {
       categoria: document.getElementById("categoria").value,
       precioCompra: parseFloat(document.getElementById("precioCompra").value)
     };
-  
-    // ✅ Nueva validación para código único
+
+    // ✅ Validar código único
     const existe = productos.some(p => p.codigo === nuevo.codigo);
     if (existe) {
       alert("Ya existe un producto con este código.");
       return;
     }
-  
+
     productos.push(nuevo);
     localStorage.setItem("productos", JSON.stringify(productos));
+
+    // ✅ Registrar alta en historial
+    guardarHistorialAltaProducto(nuevo);
+
     this.reset();
     renderTabla();
   });
@@ -101,12 +105,12 @@ function renderTabla(filtro = "") {
     const fechaVenc = new Date(prod.fechaVencimiento);
     const diasRestantes = Math.floor((fechaVenc - hoy) / (1000 * 60 * 60 * 24));
 
-    // ✅ Nuevo filtro por estado
+    // ✅ Filtro avanzado
     if (estado === "vencidos" && !(fechaVenc < hoy && !isNaN(fechaVenc.getTime()))) return;
     if (estado === "porvencer" && !(diasRestantes >= 0 && diasRestantes <= 15)) return;
     if (estado === "stockbajo" && !(prod.stock < 5)) return;
 
-    // ✅ Búsqueda general en cualquier campo
+    // ✅ Filtro búsqueda general
     if (filtro) {
       const valores = Object.values(prod).map(v => String(v).toLowerCase());
       if (!valores.some(val => val.includes(filtro.toLowerCase()))) return;
@@ -140,7 +144,7 @@ function renderTabla(filtro = "") {
     body.appendChild(row);
   });
 
-  // Alertas generales (opcional)
+  // Alertas generales
   const alertasStock = productos.filter(p => p.stock < 5).length;
   const alertasVenc = productos.filter(p => {
     const venc = new Date(p.fechaVencimiento);
@@ -161,4 +165,31 @@ function verDetalle(codigo) {
   } else {
     alert("Producto no encontrado.");
   }
+}
+
+// ✅ NUEVA FUNCIÓN para registrar alta en historial
+function guardarHistorialAltaProducto(producto) {
+  const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
+  if (!historial[producto.codigo]) historial[producto.codigo] = [];
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  const usuario = user ? `${user.nombre} ${user.apellidoP} ${user.apellidoM}` : "Desconocido";
+
+  historial[producto.codigo].push({
+    fecha: new Date().toLocaleString(),
+    usuario: usuario,
+    anterior: {},
+    cambios: {
+      descripcion: producto.descripcion,
+      numeroSerie: producto.numeroSerie,
+      lote: producto.lote,
+      fechaVencimiento: producto.fechaVencimiento,
+      ubicacion: producto.ubicacion,
+      stock: producto.stock,
+      categoria: producto.categoria,
+      precioCompra: producto.precioCompra
+    }
+  });
+
+  localStorage.setItem("historialCambios", JSON.stringify(historial));
 }

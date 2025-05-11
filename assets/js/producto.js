@@ -16,14 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("descripcion").value = producto.descripcion;
   document.getElementById("numeroSerie").value = producto.numeroSerie;
   document.getElementById("lote").value = producto.lote;
-  document.getElementById("fechaVencimiento").value = producto.fechaVencimiento;
+  document.getElementById("fechaVencimiento").value = producto.fechaVencimiento !== "---" ? producto.fechaVencimiento : "";
   document.getElementById("ubicacion").value = producto.ubicacion;
   document.getElementById("stock").value = producto.stock;
   document.getElementById("categoria").value = producto.categoria;
   document.getElementById("precioCompra").value = producto.precioCompra;
 
-  const inputs = document.querySelectorAll("#formEditar input");
+  const inputs = document.querySelectorAll("#formEditar input, #formEditar select");
   const guardarBtn = document.getElementById("guardarBtn");
+
+  inputs.forEach(i => i.disabled = true);
 
   // Botón editar
   document.getElementById("editarBtn").addEventListener("click", () => {
@@ -36,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     inputs.forEach(input => input.setAttribute("data-original", input.value));
   });
 
-  // Botón cancelar
   cancelarBtn.addEventListener("click", () => {
     inputs.forEach(input => {
       input.value = input.getAttribute("data-original");
@@ -49,35 +50,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Botón guardar cambios
   document.getElementById("formEditar").addEventListener("submit", function(e) {
-    if (producto.stock < 5) {
-      generarOrdenCompra(producto);
-    }
-
     e.preventDefault();
 
-    const cambios = {
-      descripcion: document.getElementById("descripcion").value,
-      numeroSerie: document.getElementById("numeroSerie").value,
-      lote: document.getElementById("lote").value,
-      fechaVencimiento: document.getElementById("fechaVencimiento").value,
-      ubicacion: document.getElementById("ubicacion").value,
-      stock: parseInt(document.getElementById("stock").value),
-      categoria: document.getElementById("categoria").value,
-      precioCompra: parseFloat(document.getElementById("precioCompra").value)
+    const anterior = {
+      descripcion: producto.descripcion,
+      numeroSerie: producto.numeroSerie,
+      lote: producto.lote,
+      fechaVencimiento: producto.fechaVencimiento,
+      ubicacion: producto.ubicacion,
+      stock: producto.stock,
+      categoria: producto.categoria,
+      precioCompra: producto.precioCompra
     };
 
-    guardarHistorial(codigo, cambios);
+    producto.descripcion = document.getElementById("descripcion").value;
+    producto.numeroSerie = document.getElementById("numeroSerie").value;
+    producto.lote = document.getElementById("lote").value;
+    producto.fechaVencimiento = document.getElementById("fechaVencimiento").value || "---";
+    producto.ubicacion = document.getElementById("ubicacion").value;
+    producto.stock = parseInt(document.getElementById("stock").value);
+    producto.categoria = document.getElementById("categoria").value;
+    producto.precioCompra = parseFloat(document.getElementById("precioCompra").value);
 
-    producto.descripcion = cambios.descripcion;
-    producto.numeroSerie = cambios.numeroSerie;
-    producto.lote = cambios.lote;
-    producto.fechaVencimiento = cambios.fechaVencimiento;
-    producto.ubicacion = cambios.ubicacion;
-    producto.stock = cambios.stock;
-    producto.categoria = cambios.categoria;
-    producto.precioCompra = cambios.precioCompra;
-
-    mostrarHistorial(codigo);
+    guardarHistorial(codigo, anterior, {
+      descripcion: producto.descripcion,
+      numeroSerie: producto.numeroSerie,
+      lote: producto.lote,
+      fechaVencimiento: producto.fechaVencimiento,
+      ubicacion: producto.ubicacion,
+      stock: producto.stock,
+      categoria: producto.categoria,
+      precioCompra: producto.precioCompra
+    });
 
     const nuevosProductos = productos.map(p => p.codigo === codigo ? producto : p);
     localStorage.setItem("productos", JSON.stringify(nuevosProductos));
@@ -86,8 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Producto actualizado.");
     inputs.forEach(i => i.disabled = true);
     guardarBtn.style.display = "none";
-    document.getElementById("editarBtn").style.display = "inline-block";
     cancelarBtn.style.display = "none";
+    document.getElementById("editarBtn").style.display = "inline-block";
+
+    mostrarHistorial(codigo);
   });
 
   // Botón eliminar
@@ -102,79 +108,56 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   mostrarHistorial(codigo);
-
-  // ====== HISTORIAL ======
-  function guardarHistorial(codigo, cambios) {
-    const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
-    const productos = JSON.parse(localStorage.getItem("productos")) || [];
-    const anterior = productos.find(p => p.codigo === codigo) || {};
-
-    if (!historial[codigo]) historial[codigo] = [];
-
-    historial[codigo].push({
-      fecha: new Date().toLocaleString(),
-      cambios,
-      anterior
-    });
-
-    localStorage.setItem("historialCambios", JSON.stringify(historial));
-  }
-
-  function mostrarHistorial(codigo) {
-    const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}")[codigo] || [];
-    const contenedor = document.getElementById("historial");
-    if (!contenedor) return;
-  
-    if (historial.length === 0) {
-      contenedor.innerHTML = "<p>Sin cambios registrados.</p>";
-      return;
-    }
-  
-    contenedor.innerHTML = "";
-    historial.slice().reverse().forEach(entry => {
-      const anterior = entry.anterior || {};
-      const cambios = entry.cambios;
-      let detalleCambios = "";
-    
-      Object.keys(cambios).forEach(attr => {
-        const valorAnterior = (anterior[attr] !== undefined) ? anterior[attr] : "(sin dato)";
-        const valorNuevo = cambios[attr];
-        if (valorAnterior !== valorNuevo) {
-          detalleCambios += `${attr}: Antes "${valorAnterior}" → Ahora "${valorNuevo}"<br>`;
-        }
-      });
-    
-      const div = document.createElement("div");
-      div.style.border = "1px solid #ddd";
-      div.style.padding = "10px";
-      div.style.marginBottom = "8px";
-      div.style.background = "#fafafa";
-      div.innerHTML = `<strong>${entry.fecha}</strong><br>${detalleCambios}`;
-      contenedor.appendChild(div);
-    });
-  }
 });
 
-function generarOrdenCompra(producto) {
-  const ordenes = JSON.parse(localStorage.getItem("ordenes")) || [];
-  const proveedores = JSON.parse(localStorage.getItem("proveedores")) || [];
+// ✅ Nueva función con usuario
+function guardarHistorial(codigo, anterior, cambios) {
+  const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
+  if (!historial[codigo]) historial[codigo] = [];
 
-  let proveedorSeleccionado = { nombre: "Proveedor Genérico", correo: "sinregistro@proveedor.com" };
-  if (proveedores.length > 0) {
-    const random = Math.floor(Math.random() * proveedores.length);
-    proveedorSeleccionado = proveedores[random];
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  const usuario = user ? `${user.nombre} ${user.apellidoP} ${user.apellidoM}` : "Desconocido";
+
+  historial[codigo].push({
+    fecha: new Date().toLocaleString(),
+    usuario: usuario,
+    anterior,
+    cambios
+  });
+
+  localStorage.setItem("historialCambios", JSON.stringify(historial));
+}
+
+function mostrarHistorial(codigo) {
+  const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}")[codigo] || [];
+  const contenedor = document.getElementById("historial");
+  if (!contenedor) return;
+
+  if (historial.length === 0) {
+    contenedor.innerHTML = "<p>Sin cambios registrados.</p>";
+    return;
   }
 
-  const nuevaOrden = {
-    id: ordenes.length + 1,
-    codigo: producto.codigo,
-    descripcion: producto.descripcion,
-    stock: producto.stock,
-    fecha: new Date().toLocaleString(),
-    proveedor: proveedorSeleccionado.nombre,
-    correoProveedor: proveedorSeleccionado.correo
-  };
+  contenedor.innerHTML = "";
+  historial.slice().reverse().forEach(entry => {
+    const anterior = entry.anterior || {};
+    const cambios = entry.cambios;
+    let detalleCambios = "";
 
-  ordenes.push(nuevaOrden);
-  localStorage.setItem("ordenes", JSON.stringify(ordenes));
+    Object.keys(cambios).forEach(attr => {
+      const valorAnterior = (anterior[attr] !== undefined) ? anterior[attr] : "(sin dato)";
+      const valorNuevo = cambios[attr];
+      if (valorAnterior !== valorNuevo) {
+        detalleCambios += `${attr}: Antes "${valorAnterior}" → Ahora "${valorNuevo}"<br>`;
+      }
+    });
+
+    const div = document.createElement("div");
+    div.style.border = "1px solid #ddd";
+    div.style.padding = "10px";
+    div.style.marginBottom = "8px";
+    div.style.background = "#fafafa";
+    div.innerHTML = `<strong>${entry.fecha}</strong><br><em>Usuario: ${entry.usuario || "Desconocido"}</em><br>${detalleCambios}`;
+    contenedor.appendChild(div);
+  });
 }
