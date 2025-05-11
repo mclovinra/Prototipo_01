@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     localStorage.setItem("movimientos", JSON.stringify(movimientos));
 
+    const stockAnterior = producto.stock;
+
     // Actualizar stock
     if (tipo === "Entrada") {
       producto.stock += cantidad;
@@ -42,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
         generarOrdenCompra(producto);
       }
     }
+
+    guardarHistorialMovimiento(producto.codigo, stockAnterior, producto.stock);
 
     const nuevosProductos = productos.map(p => p.codigo === codigo ? producto : p);
     localStorage.setItem("productos", JSON.stringify(nuevosProductos));
@@ -75,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
         csv += `"${mov.fecha}","${mov.codigoProducto}","${mov.tipo}","${mov.cantidad}"\n`;
       });
 
-      // ✅ Solución definitiva: añade BOM para Excel
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
 
@@ -130,4 +133,22 @@ function generarOrdenCompra(producto) {
 
   ordenes.push(nuevaOrden);
   localStorage.setItem("ordenes", JSON.stringify(ordenes));
+}
+
+function guardarHistorialMovimiento(codigo, stockAnterior, stockNuevo) {
+  const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
+  if (!historial[codigo]) historial[codigo] = [];
+
+  // ✅ Nuevo: obtener usuario actual
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  const usuario = user ? `${user.nombre} ${user.apellidoP} ${user.apellidoM}` : "Desconocido";
+
+  historial[codigo].push({
+    fecha: new Date().toLocaleString(),
+    usuario: usuario, // 👈 Nuevo campo
+    anterior: { stock: stockAnterior },
+    cambios: { stock: stockNuevo }
+  });
+
+  localStorage.setItem("historialCambios", JSON.stringify(historial));
 }

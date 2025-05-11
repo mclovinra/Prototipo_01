@@ -44,35 +44,39 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (tipo === "historial") {
       const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}");
       const filtroAtributo = document.getElementById("filtroAtributo").value.trim().toLowerCase();
-        
-      head.innerHTML = `<tr><th>Código Producto</th><th>Fecha</th><th>Detalle Cambios</th></tr>`;
-        
+
+      head.innerHTML = `<tr><th>Código Producto</th><th>Fecha</th><th>Usuario</th><th>Detalle Cambios</th></tr>`;
+
       Object.keys(historial).forEach(codigo => {
         historial[codigo].forEach(entry => {
           const anterior = entry.anterior || {};
           const cambios = entry.cambios;
           let detalleCambios = "";
-        
+
           Object.keys(cambios).forEach(attr => {
             if (filtroAtributo && !attr.toLowerCase().includes(filtroAtributo)) return;
-          
+
             const valorAnterior = (anterior[attr] !== undefined) ? anterior[attr] : "(sin dato)";
             const valorNuevo = cambios[attr];
             if (valorAnterior !== valorNuevo) {
-              detalleCambios += `${attr}: Antes "${valorAnterior}" → Cambio "${valorNuevo}" | `;
+              detalleCambios += `${attr}: Antes "${valorAnterior}" → Ahora "${valorNuevo}" | `;
             }
           });
-        
+
           if (detalleCambios) {
             const row = document.createElement("tr");
-            row.innerHTML = `<td>${codigo}</td><td>${entry.fecha}</td><td>${detalleCambios}</td>`;
+            row.innerHTML = `<td>${codigo}</td><td>${entry.fecha}</td><td>${entry.usuario || "Desconocido"}</td><td>${detalleCambios}</td>`;
             body.appendChild(row);
-            datosReporte.push({ Codigo: codigo, Fecha: entry.fecha, Cambios: detalleCambios });
+            datosReporte.push({
+              Codigo: codigo,
+              Fecha: entry.fecha,
+              Usuario: entry.usuario || "Desconocido",
+              Cambios: detalleCambios
+            });
           }
         });
       });
     }
-
   });
 
   document.getElementById("btnExportarReporte").addEventListener("click", () => {
