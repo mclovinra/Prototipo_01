@@ -53,3 +53,18 @@ button:hover {
   top: 35%;
   cursor: pointer;
 }
+
+body.login-bg {
+  background-image: url('../img/logo_maestranzas.png'); /* Ruta ajustada */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.empresa-logo img {
+  max-width: 150px;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

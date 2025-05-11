@@ -124,31 +124,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const historial = JSON.parse(localStorage.getItem("historialCambios") || "{}")[codigo] || [];
     const contenedor = document.getElementById("historial");
     if (!contenedor) return;
-
+  
     if (historial.length === 0) {
       contenedor.innerHTML = "<p>Sin cambios registrados.</p>";
       return;
     }
-
+  
     contenedor.innerHTML = "";
     historial.slice().reverse().forEach(entry => {
       const anterior = entry.anterior || {};
       const cambios = entry.cambios;
+      let detalleCambios = "";
+    
+      Object.keys(cambios).forEach(attr => {
+        const valorAnterior = (anterior[attr] !== undefined) ? anterior[attr] : "(sin dato)";
+        const valorNuevo = cambios[attr];
+        if (valorAnterior !== valorNuevo) {
+          detalleCambios += `${attr}: Antes "${valorAnterior}" → Ahora "${valorNuevo}"<br>`;
+        }
+      });
+    
       const div = document.createElement("div");
       div.style.border = "1px solid #ddd";
       div.style.padding = "10px";
       div.style.marginBottom = "8px";
       div.style.background = "#fafafa";
-
-      div.innerHTML = `<strong>${entry.fecha}</strong><br>
-        Descripción: <span style="color:${anterior.descripcion !== cambios.descripcion ? 'red' : 'black'}">${cambios.descripcion}</span><br>
-        Número Serie: <span style="color:${anterior.numeroSerie !== cambios.numeroSerie ? 'red' : 'black'}">${cambios.numeroSerie}</span><br>
-        Lote: <span style="color:${anterior.lote !== cambios.lote ? 'red' : 'black'}">${cambios.lote}</span><br>
-        Vencimiento: <span style="color:${anterior.fechaVencimiento !== cambios.fechaVencimiento ? 'red' : 'black'}">${cambios.fechaVencimiento}</span><br>
-        Ubicación: <span style="color:${anterior.ubicacion !== cambios.ubicacion ? 'red' : 'black'}">${cambios.ubicacion}</span><br>
-        Stock: <span style="color:${anterior.stock !== cambios.stock ? 'red' : 'black'}">${cambios.stock}</span><br>
-        Categoría: <span style="color:${anterior.categoria !== cambios.categoria ? 'red' : 'black'}">${cambios.categoria}</span><br>
-        Precio: <span style="color:${anterior.precioCompra !== cambios.precioCompra ? 'red' : 'black'}">${cambios.precioCompra}</span>`;
+      div.innerHTML = `<strong>${entry.fecha}</strong><br>${detalleCambios}`;
       contenedor.appendChild(div);
     });
   }
